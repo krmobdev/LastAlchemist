@@ -473,7 +473,7 @@ func _show_recipes() -> void:
     for id in recipes.recipes:
         var r: Dictionary = recipes.recipes[id]
         var known := recipes.known.has(id)
-        var text := ("✓  " + r["name"]) if known else "?  Неизвестный рецепт"
+        var text: String = ("✓  " + str(r["name"])) if known else "?  Неизвестный рецепт"
         _make_label(box, text, 19)
     var back := _make_button(box, "← Вернуться в лабораторию", 60)
     back.pressed.connect(show_lab)

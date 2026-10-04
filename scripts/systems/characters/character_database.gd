@@ -11,3 +11,6 @@ func _init() -> void:
     if parsed is Dictionary:
         for character in parsed.get("characters", []):
             characters[str(character["id"])] = character
+
+func get_character(id: String) -> Dictionary:
+    return characters.get(id, {})

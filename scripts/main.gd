@@ -45,14 +45,14 @@ const ITEMS := {
     "mushroom": {"name": "Красный гриб", "icon": "res://assets/items/mushroom.svg"},
     "crystal": {"name": "Синий кристалл", "icon": "res://assets/items/crystal.svg"},
     "flower": {"name": "Звёздный цветок", "icon": "res://assets/items/flower.svg"},
-    "lavender": {"name": "Лавандовый пучок", "icon": ""},
-    "ember_root": {"name": "Корень угольника", "icon": ""},
-    "frost_leaf": {"name": "Морозный лист", "icon": ""},
-    "sun_dust": {"name": "Солнечная пыль", "icon": ""},
-    "night_berry": {"name": "Ночная ягода", "icon": ""},
-    "moonstone": {"name": "Лунный камень", "icon": ""},
-    "thorn": {"name": "Колючая лоза", "icon": ""},
-    "ash": {"name": "Серый пепел", "icon": ""}
+    "lavender": {"name": "Лавандовый пучок", "icon": "res://assets/items/lavender.svg"},
+    "ember_root": {"name": "Корень угольника", "icon": "res://assets/items/ember_root.svg"},
+    "frost_leaf": {"name": "Морозный лист", "icon": "res://assets/items/frost_leaf.svg"},
+    "sun_dust": {"name": "Солнечная пыль", "icon": "res://assets/items/sun_dust.svg"},
+    "night_berry": {"name": "Ночная ягода", "icon": "res://assets/items/night_berry.svg"},
+    "moonstone": {"name": "Лунный камень", "icon": "res://assets/items/moonstone.svg"},
+    "thorn": {"name": "Колючая лоза", "icon": "res://assets/items/thorn.svg"},
+    "ash": {"name": "Серый пепел", "icon": "res://assets/items/ash.svg"}
 }
 
 func _ready() -> void:

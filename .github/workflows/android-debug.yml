@@ -1,25 +1,9 @@
 name: Android Debug APK
 
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main ]
-    paths:
-      - '**.gd'
-      - '**.tscn'
-      - '**.tres'
-      - '**.json'
-      - '**.svg'
-      - 'project.godot'
-      - 'export_presets.cfg'
-      - '.github/workflows/android-debug.yml'
+on: [push, workflow_dispatch]
 
 permissions:
   contents: read
-
-env:
-  GODOT_VERSION: 4.3
-  GODOT_VERSION_FULL: 4.3.stable
 
 jobs:
   build:
@@ -41,17 +25,14 @@ jobs:
           packages: ''
 
       - name: Install Android SDK packages
-        run: |
-          sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
+        run: sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
 
-      - name: Configure Godot Android editor settings
+      - name: Configure Godot Android settings
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p ~/.config/godot ~/.android
-          if [ ! -f ~/.android/debug.keystore ]; then
-            keytool -genkeypair -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-          fi
+          keytool -genkeypair -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
           cat > ~/.config/godot/editor_settings-4.3.tres <<EOF
 [gd_resource type="EditorSettings" format=3]
 
@@ -69,32 +50,25 @@ EOF
           path: |
             ~/.cache/last-alchemist-godot
             ~/.local/share/godot/export_templates/4.3.stable
-          key: godot-${{ env.GODOT_VERSION_FULL }}-android-v1
+          key: godot-4.3.stable-android-v2
 
-      - name: Install Godot 4.3 and export templates
+      - name: Install Godot 4.3 and templates
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p ~/.cache/last-alchemist-godot
+          mkdir -p ~/.cache/last-alchemist-godot ~/.local/share/godot/export_templates/4.3.stable
           if [ ! -x ~/.cache/last-alchemist-godot/godot ]; then
-            curl -fL --retry 3 --retry-all-errors \
-              'https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip' \
-              -o /tmp/godot.zip
+            curl -fL --retry 3 --retry-all-errors 'https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip' -o /tmp/godot.zip
             unzip -q /tmp/godot.zip -d /tmp/godot
             install -m 0755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 ~/.cache/last-alchemist-godot/godot
           fi
-          mkdir -p ~/.local/share/godot/export_templates/4.3.stable
-          if [ ! -f ~/.local/share/godot/export_templates/4.3.stable/android_debug.apk ]; then
-            curl -fL --retry 3 --retry-all-errors \
-              'https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz' \
-              -o /tmp/templates.tpz
-            rm -rf /tmp/godot_templates
-            mkdir -p /tmp/godot_templates
+          if [ ! -s ~/.local/share/godot/export_templates/4.3.stable/android_debug.apk ]; then
+            curl -fL --retry 3 --retry-all-errors 'https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz' -o /tmp/templates.tpz
+            rm -rf /tmp/godot_templates && mkdir -p /tmp/godot_templates
             unzip -q /tmp/templates.tpz -d /tmp/godot_templates
             cp /tmp/godot_templates/templates/* ~/.local/share/godot/export_templates/4.3.stable/
           fi
           ~/.cache/last-alchemist-godot/godot --version
-          test -s ~/.local/share/godot/export_templates/4.3.stable/android_debug.apk
 
       - name: Import project
         run: ~/.cache/last-alchemist-godot/godot --headless --editor --quit --path .
@@ -102,7 +76,7 @@ EOF
       - name: Export Android debug APK
         run: |
           mkdir -p build
-          ~/.cache/last-alchemist-godot/godot --headless --path . --export-debug "Android Debug" build/LastAlchemist-debug.apk
+          ~/.cache/last-alchemist-godot/godot --headless --verbose --path . --export-debug "Android Debug" build/LastAlchemist-debug.apk
 
       - name: Verify APK
         run: |

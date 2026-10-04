@@ -1,0 +1,8 @@
+{
+  "locations": [
+    {"id":"village","name":"Старая Долина","description":"Тихая деревня у подножия леса.","unlock_reputation":0,"gather":["herb","flower","lavender"]},
+    {"id":"forest","name":"Шепчущий лес","description":"Густой лес, где растут редкие растения.","unlock_reputation":2,"gather":["mushroom","thorn","frost_leaf"]},
+    {"id":"quarry","name":"Синяя каменоломня","description":"Старая шахта с магическими кристаллами.","unlock_reputation":4,"gather":["crystal","moonstone","ash"]},
+    {"id":"sun_ruins","name":"Солнечные руины","description":"Развалины древней алхимической обсерватории.","unlock_reputation":7,"gather":["sun_dust","moonstone","ember_root"]}
+  ]
+}

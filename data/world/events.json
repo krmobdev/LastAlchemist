@@ -1,0 +1,7 @@
+{
+  "events": [
+    {"id":"herbalist","location":"forest","text":"Ты находишь заброшенную корзину трав.","reward":"lavender","amount":2},
+    {"id":"crystal_cache","location":"quarry","text":"Под камнями мерцает маленький кристалл.","reward":"crystal","amount":2},
+    {"id":"old_altar","location":"sun_ruins","text":"Древний алтарь всё ещё хранит солнечную пыль.","reward":"sun_dust","amount":1}
+  ]
+}

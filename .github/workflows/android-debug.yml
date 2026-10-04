@@ -35,16 +35,17 @@ jobs:
           set -euo pipefail
           mkdir -p ~/.config/godot ~/.android
           keytool -genkeypair -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
-          cat > ~/.config/godot/editor_settings-4.3.tres <<EOF
-[gd_resource type="EditorSettings" format=3]
+          cat > /tmp/editor_settings-4.3.tres <<EOF
+          [gd_resource type="EditorSettings" format=3]
 
-[resource]
-export/android/java_sdk_path = "${JAVA_HOME}"
-export/android/android_sdk_path = "${ANDROID_HOME}"
-export/android/debug_keystore = "${HOME}/.android/debug.keystore"
-export/android/debug_keystore_user = "androiddebugkey"
-export/android/debug_keystore_pass = "android"
-EOF
+          [resource]
+          export/android/java_sdk_path = "${JAVA_HOME}"
+          export/android/android_sdk_path = "${ANDROID_HOME}"
+          export/android/debug_keystore = "${HOME}/.android/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          EOF
+          sed 's/^          //' /tmp/editor_settings-4.3.tres > ~/.config/godot/editor_settings-4.3.tres
 
       - name: Cache Godot
         uses: actions/cache@v4

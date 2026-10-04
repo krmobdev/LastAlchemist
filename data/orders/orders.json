@@ -1,5 +1,9 @@
 {
   "orders": [
-    {"id":"eliza_healing","client":"eliza","recipe":"healing","quantity":1,"reward":120,"reputation":1}
+    {"id":"eliza_healing","client":"eliza","recipe":"healing","quantity":1,"reward":120,"reputation":1},
+    {"id":"marcus_strength","client":"marcus","recipe":"strength","quantity":1,"reward":240,"reputation":2},
+    {"id":"iris_antidote","client":"iris","recipe":"antidote","quantity":1,"reward":220,"reputation":2},
+    {"id":"orin_light","client":"orin","recipe":"light","quantity":1,"reward":330,"reputation":3},
+    {"id":"selene_moon","client":"selene","recipe":"moon","quantity":1,"reward":450,"reputation":4}
   ]
 }

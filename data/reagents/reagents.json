@@ -1,8 +1,16 @@
 {
   "reagents": [
-    {"id":"herb","name":"Лунная трава","category":"plant","rarity":1,"base_price":8},
-    {"id":"mushroom","name":"Красный гриб","category":"fungus","rarity":1,"base_price":10},
-    {"id":"crystal","name":"Синий кристалл","category":"mineral","rarity":2,"base_price":18},
-    {"id":"flower","name":"Звёздный цветок","category":"plant","rarity":2,"base_price":15}
+    {"id":"herb","name":"Лунная трава","category":"plant","rarity":1,"base_price":8,"tags":["life","green"]},
+    {"id":"mushroom","name":"Красный гриб","category":"fungus","rarity":1,"base_price":10,"tags":["fire","wild"]},
+    {"id":"crystal","name":"Синий кристалл","category":"mineral","rarity":2,"base_price":18,"tags":["focus","arcane"]},
+    {"id":"flower","name":"Звёздный цветок","category":"plant","rarity":2,"base_price":15,"tags":["life","arcane"]},
+    {"id":"lavender","name":"Лавандовый пучок","category":"plant","rarity":1,"base_price":9,"tags":["calm","focus"]},
+    {"id":"ember_root","name":"Корень угольника","category":"root","rarity":2,"base_price":20,"tags":["fire","strength"]},
+    {"id":"frost_leaf","name":"Морозный лист","category":"plant","rarity":2,"base_price":22,"tags":["frost","calm"]},
+    {"id":"sun_dust","name":"Солнечная пыль","category":"mineral","rarity":3,"base_price":35,"tags":["light","energy"]},
+    {"id":"night_berry","name":"Ночная ягода","category":"fruit","rarity":3,"base_price":38,"tags":["shadow","life"]},
+    {"id":"moonstone","name":"Лунный камень","category":"mineral","rarity":3,"base_price":45,"tags":["arcane","frost"]},
+    {"id":"thorn","name":"Колючая лоза","category":"plant","rarity":2,"base_price":17,"tags":["poison","wild"]},
+    {"id":"ash","name":"Серый пепел","category":"mineral","rarity":1,"base_price":7,"tags":["fire","shadow"]}
   ]
 }

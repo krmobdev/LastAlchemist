@@ -1,7 +1,16 @@
 {
   "recipes": [
-    {"id":"healing","name":"Зелье восстановления","a":"herb","b":"flower","result":"potion","reward":40},
-    {"id":"focus","name":"Эликсир концентрации","a":"crystal","b":"flower","result":"potion","reward":55},
-    {"id":"ember","name":"Алхимический эликсир","a":"mushroom","b":"crystal","result":"potion","reward":70}
+    {"id":"healing","name":"Зелье восстановления","a":"herb","b":"flower","result":"healing_potion","reward":40,"value":65,"effect":"life"},
+    {"id":"focus","name":"Эликсир концентрации","a":"crystal","b":"flower","result":"focus_potion","reward":55,"value":85,"effect":"focus"},
+    {"id":"ember","name":"Алхимический эликсир","a":"mushroom","b":"crystal","result":"ember_potion","reward":70,"value":110,"effect":"fire"},
+    {"id":"calm","name":"Настой спокойствия","a":"lavender","b":"frost_leaf","result":"calm_potion","reward":75,"value":120,"effect":"calm"},
+    {"id":"strength","name":"Зелье силы","a":"ember_root","b":"mushroom","result":"strength_potion","reward":90,"value":145,"effect":"strength"},
+    {"id":"light","name":"Солнечный эликсир","a":"sun_dust","b":"flower","result":"light_potion","reward":130,"value":210,"effect":"light"},
+    {"id":"night","name":"Ночное зелье","a":"night_berry","b":"ash","result":"night_potion","reward":135,"value":220,"effect":"shadow"},
+    {"id":"moon","name":"Лунный эликсир","a":"moonstone","b":"frost_leaf","result":"moon_potion","reward":180,"value":290,"effect":"arcane"},
+    {"id":"antidote","name":"Противоядие","a":"thorn","b":"herb","result":"antidote","reward":100,"value":160,"effect":"poison"},
+    {"id":"wildfire","name":"Дикое пламя","a":"ash","b":"ember_root","result":"wildfire_potion","reward":160,"value":260,"effect":"fire"},
+    {"id":"dream","name":"Сонный эликсир","a":"lavender","b":"night_berry","result":"dream_potion","reward":170,"value":275,"effect":"dream"},
+    {"id":"star","name":"Звёздная эссенция","a":"sun_dust","b":"moonstone","result":"star_essence","reward":260,"value":420,"effect":"arcane"}
   ]
 }

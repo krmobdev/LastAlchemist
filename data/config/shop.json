@@ -1,0 +1,22 @@
+{
+  "items": [
+    {"id":"herb","price":8,"stock":20},
+    {"id":"mushroom","price":10,"stock":20},
+    {"id":"crystal","price":18,"stock":15},
+    {"id":"flower","price":15,"stock":15},
+    {"id":"lavender","price":9,"stock":15},
+    {"id":"ember_root","price":20,"stock":12},
+    {"id":"frost_leaf","price":22,"stock":12},
+    {"id":"sun_dust","price":35,"stock":8},
+    {"id":"night_berry","price":38,"stock":8},
+    {"id":"moonstone","price":45,"stock":6},
+    {"id":"thorn","price":17,"stock":12},
+    {"id":"ash","price":7,"stock":20}
+  ],
+  "upgrades": [
+    {"id":"shelf_1","name":"Дополнительная полка","price":250,"capacity":10},
+    {"id":"cauldron_1","name":"Улучшенный котёл","price":500,"quality_bonus":0.1},
+    {"id":"shelf_2","name":"Большой склад","price":900,"capacity":20},
+    {"id":"cauldron_2","name":"Алхимическая печь","price":1500,"quality_bonus":0.2}
+  ]
+}

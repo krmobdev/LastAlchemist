@@ -1,0 +1,9 @@
+{
+  "characters": [
+    {"id":"eliza","name":"Элиза","role":"Травница","portrait":"eliza","personality":"добрая"},
+    {"id":"marcus","name":"Маркус","role":"Капитан стражи","portrait":"marcus","personality":"строгий"},
+    {"id":"iris","name":"Ирис","role":"Целительница","portrait":"iris","personality":"спокойная"},
+    {"id":"orin","name":"Орин","role":"Торговец","portrait":"orin","personality":"хитрый"},
+    {"id":"selene","name":"Селена","role":"Учёная","portrait":"selene","personality":"любознательная"}
+  ]
+}

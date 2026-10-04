@@ -12,6 +12,8 @@ const WorldEvents = preload("res://scripts/systems/world/event_system.gd")
 const Dialogue = preload("res://scripts/systems/characters/dialogue_system.gd")
 const Characters = preload("res://scripts/systems/characters/character_database.gd")
 const Story = preload("res://scripts/systems/story/story_system.gd")
+const Feedback = preload("res://scripts/systems/polish/feedback_system.gd")
+const Audio = preload("res://scripts/systems/polish/audio_system.gd")
 
 var inventory: InventorySystem
 var recipes: RecipeBook
@@ -25,6 +27,8 @@ var world_events: WorldEventSystem
 var dialogue: DialogueSystem
 var characters: CharacterDatabase
 var story: StorySystem
+var feedback: FeedbackSystem
+var audio: AudioSystem
 var order_index := 0
 var order_database: Array[Dictionary] = []
 var gold := 100
@@ -64,6 +68,8 @@ func _ready() -> void:
     dialogue = Dialogue.new()
     characters = Characters.new()
     story = Story.new()
+    feedback = Feedback.new()
+    audio = Audio.new()
     story.milestone_reached.connect(_on_milestone_reached)
     story.act_changed.connect(_on_act_changed)
     world.gathered.connect(_on_gathered)
@@ -97,6 +103,7 @@ func _make_button(parent: Control, text: String, min_height: int = 64) -> Button
     b.custom_minimum_size = Vector2(0, min_height)
     b.add_theme_font_size_override("font_size", 18)
     parent.add_child(b)
+    b.pressed.connect(func(): feedback.click())
     return b
 
 func _panel_style(color: Color, radius := 18) -> StyleBoxFlat:
@@ -138,6 +145,10 @@ func _base(title: String) -> VBoxContainer:
     var box := VBoxContainer.new()
     box.add_theme_constant_override("separation", 14)
     margin.add_child(box)
+    box.modulate.a = 0.0
+    var tween := create_tween()
+    tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+    tween.tween_property(box, "modulate:a", 1.0, 0.18)
     _make_label(box, title, 30)
     return box
 
@@ -247,11 +258,15 @@ func _brew() -> void:
     var recipe_id := recipes.find_reaction(a, b)
     if recipe_id.is_empty():
         last_potion = "unknown"
+        feedback.failure()
+        audio.play_brew_failure()
         message_label.text = "💨 Реакция нестабильна. Получилась неизвестная смесь."
     else:
         recipes.discover(recipe_id)
         story.check_progress(orders.reputation, world, recipes.known)
         last_potion = recipe_id
+        feedback.success()
+        audio.play_brew_success()
         message_label.text = "✨ Успех! Открыт рецепт: %s" % recipes.recipes[recipe_id]["name"]
     selected.clear()
 

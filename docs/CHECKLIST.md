@@ -46,17 +46,17 @@
 - [x] Story progression
 
 ## Phase 4 — Polish
-- [ ] Animations
+- [x] Animations
 - [ ] Particle effects
-- [ ] Audio
-- [ ] Haptics
+- [x] Audio
+- [x] Haptics
 - [ ] Tutorial
 - [ ] UX pass
 - [ ] Balance pass
 - [ ] Error handling
 
 ## Phase 5 — QA & release
-- [ ] Automated logic tests
+- [x] Automated logic tests
 - [x] Save/load tests
 - [ ] Android debug build
 - [ ] Device test

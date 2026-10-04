@@ -49,6 +49,7 @@ func _ready() -> void:
     inventory.changed.connect(_refresh_inventory)
     recipes.discovered.connect(_on_recipe_discovered)
     orders.completed.connect(_on_order_completed)
+    orders.order_changed.connect(_on_order_changed)
     show_menu()
 
 func _clear() -> void:
@@ -149,9 +150,13 @@ func show_lab() -> void:
     var order_box := VBoxContainer.new()
     order_panel.add_child(order_box)
     _make_label(order_box, "📜 ЗАКАЗ", 19)
-    _make_label(order_box, "Клиент: Элиза\nНужно: Зелье восстановления\nНаграда: 120 золотых", 16)
+    _make_label(order_box, "Клиент: %s\nНужно: %s\nНаграда: %d золотых" % [_order_client_name(), _order_recipe_name(), int(orders.active.get("reward", 0))], 16)
     var deliver := _make_button(order_box, "Сдать зелье", 52)
     deliver.pressed.connect(_deliver_order)
+    var next := _make_button(order_box, "Следующий заказ", 46)
+    next.pressed.connect(func():
+        orders.next_order()
+        show_lab())
 
     _make_label(box, "ИНГРЕДИЕНТЫ — выбери два", 19)
     var grid := GridContainer.new()
@@ -226,6 +231,27 @@ func _deliver_order() -> void:
         message_label.text = "🎉 %s +%d золота" % [result["message"], result["reward"]]
     else:
         message_label.text = result["message"]
+
+
+func _order_client_name() -> String:
+    var id := str(orders.active.get("client", ""))
+    var file := FileAccess.open("res://data/characters/characters.json", FileAccess.READ)
+    if file:
+        var data = JSON.parse_string(file.get_as_text())
+        if data is Dictionary:
+            for c in data.get("characters", []):
+                if str(c.get("id", "")) == id:
+                    return str(c.get("name", id))
+    return id
+
+func _order_recipe_name() -> String:
+    var id := str(orders.active.get("recipe", ""))
+    if recipes.recipes.has(id):
+        return str(recipes.recipes[id].get("name", id))
+    return id
+
+func _on_order_changed(_order: Dictionary) -> void:
+    last_potion = ""
 
 func _on_recipe_discovered(_id: String) -> void:
     pass

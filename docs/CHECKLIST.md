@@ -34,7 +34,7 @@
 - [x] Shop
 - [x] Laboratory upgrades
 - [x] Reputation
-- [ ] Multiple order types
+- [x] Multiple order types
 - [ ] First village location
 
 ## Phase 3 — World & progression

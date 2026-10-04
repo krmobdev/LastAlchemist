@@ -7,6 +7,7 @@ const Save = preload("res://scripts/systems/save/save_manager.gd")
 const Economy = preload("res://scripts/systems/economy/economy_system.gd")
 const Upgrade = preload("res://scripts/systems/world/upgrade_system.gd")
 const Shop = preload("res://scripts/systems/shop/shop_system.gd")
+const World = preload("res://scripts/systems/world/world_system.gd")
 
 var inventory: InventorySystem
 var recipes: RecipeBook
@@ -15,6 +16,7 @@ var save_manager: SaveManager
 var economy: EconomySystem
 var upgrades: UpgradeSystem
 var shop: ShopSystem
+var world: WorldSystem
 var order_index := 0
 var order_database: Array[Dictionary] = []
 var gold := 100
@@ -41,6 +43,8 @@ func _ready() -> void:
     economy = Economy.new()
     upgrades = Upgrade.new()
     shop = Shop.new()
+    world = World.new()
+    world.gathered.connect(_on_gathered)
     var order_file := FileAccess.open("res://data/orders/orders.json", FileAccess.READ)
     if order_file:
         var order_data = JSON.parse_string(order_file.get_as_text())
@@ -139,6 +143,8 @@ func show_lab() -> void:
     gold_label = _make_label(top, "🪙  %d" % gold, 20)
     gold_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     reputation_label = _make_label(top, "★  %d" % orders.reputation, 20)
+    var world_btn := _make_button(top, "🗺 Мир", 48)
+    world_btn.pressed.connect(show_world)
     var shop_btn := _make_button(top, "🛒 Магазин", 48)
     shop_btn.pressed.connect(show_shop)
     var menu := _make_button(top, "Меню", 48)
@@ -272,6 +278,47 @@ func _refresh_inventory(_items: Dictionary) -> void:
         if is_instance_valid(inventory_labels[id]):
             inventory_labels[id].text = "%s\n%d" % [ITEMS[id]["name"], int(inventory.items.get(id, 0))]
 
+
+
+func show_world() -> void:
+    var box := _base("🗺 МИР — СТАРАЯ ДОЛИНА")
+    _make_label(box, "Репутация: %d  •  Текущая локация: %s" % [orders.reputation, _world_location_name()], 17)
+    for id in world.locations:
+        var loc: Dictionary = world.locations[id]
+        var unlocked := world.unlocked.has(id)
+        var req := int(loc.get("unlock_reputation", 0))
+        var row := PanelContainer.new()
+        row.add_theme_stylebox_override("panel", _panel_style(Color("302824")))
+        box.add_child(row)
+        var inner := VBoxContainer.new()
+        row.add_child(inner)
+        _make_label(inner, ("✓ " if unlocked else "🔒 ") + str(loc.get("name", id)), 19)
+        _make_label(inner, str(loc.get("description", "")), 14)
+        var action := _make_button(inner, "Посетить" if unlocked else "Открыть • репутация %d" % req, 48)
+        if unlocked:
+            action.pressed.connect(func(): world.travel(id); show_world())
+        else:
+            action.disabled = not world.can_unlock(id, orders.reputation)
+            action.pressed.connect(func():
+                if world.unlock(id, orders.reputation):
+                    show_world())
+    var gather := _make_button(box, "🌿 Собрать ингредиент", 64)
+    gather.pressed.connect(func():
+        var result := world.gather()
+        if result.is_empty():
+            return
+        inventory.add_item(str(result["item"]), int(result["amount"]))
+        show_world())
+    var back := _make_button(box, "← В лабораторию", 60)
+    back.pressed.connect(show_lab)
+
+func _world_location_name() -> String:
+    if world.locations.has(world.current_location):
+        return str(world.locations[world.current_location].get("name", world.current_location))
+    return world.current_location
+
+func _on_gathered(_item_id: String, _amount: int) -> void:
+    pass
 
 func show_shop() -> void:
     var box := _base("🛒 МАГАЗИН И ЛАБОРАТОРИЯ")

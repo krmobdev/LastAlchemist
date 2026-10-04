@@ -38,11 +38,11 @@
 - [ ] First village location
 
 ## Phase 3 — World & progression
-- [ ] Map
-- [ ] Exploration
-- [ ] Locked locations
+- [x] Map
+- [x] Exploration
+- [x] Locked locations
 - [ ] Random events
-- [ ] Rare reagents
+- [x] Rare reagents
 - [ ] Story progression
 
 ## Phase 4 — Polish

@@ -28,12 +28,12 @@
 - [x] Save/load
 
 ## Phase 2 — Content
-- [ ] 10–15 reagents
-- [ ] 10–20 recipes
-- [ ] 5+ clients
-- [ ] Shop
-- [ ] Laboratory upgrades
-- [ ] Reputation
+- [x] 10–15 reagents
+- [x] 10–20 recipes
+- [x] 5+ clients
+- [x] Shop
+- [x] Laboratory upgrades
+- [x] Reputation
 - [ ] Multiple order types
 - [ ] First village location
 

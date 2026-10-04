@@ -1,0 +1,30 @@
+; Last Alchemist — initial Godot project
+; Godot 4.x
+
+config_version=5
+
+[application]
+
+config/name="Last Alchemist"
+run/main_scene="res://scenes/Main.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/size/window_width_override=360
+window/size/window_height_override=640
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+
+[input]
+
+tap:
+deadzone=0.5
+events=[Object(InputEventScreenTouch,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"position":Vector2(0, 0),"pressed":false,"double_tap":false,"canceled":false,"script":null)]

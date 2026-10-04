@@ -56,6 +56,8 @@ const ITEMS := {
 }
 
 func _ready() -> void:
+    if OS.has_feature("android"):
+        DisplayServer.screen_set_orientation(DisplayServer.SCREEN_PORTRAIT)
     inventory = Inventory.new()
     recipes = Recipes.new()
     orders = Orders.new()

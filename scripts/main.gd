@@ -4,11 +4,19 @@ const Inventory = preload("res://scripts/systems/inventory/inventory_system.gd")
 const Recipes = preload("res://scripts/systems/recipes/recipe_book.gd")
 const Orders = preload("res://scripts/systems/orders/order_system.gd")
 const Save = preload("res://scripts/systems/save/save_manager.gd")
+const Economy = preload("res://scripts/systems/economy/economy_system.gd")
+const Upgrade = preload("res://scripts/systems/world/upgrade_system.gd")
+const Shop = preload("res://scripts/systems/shop/shop_system.gd")
 
 var inventory: InventorySystem
 var recipes: RecipeBook
 var orders: OrderSystem
 var save_manager: SaveManager
+var economy: EconomySystem
+var upgrades: UpgradeSystem
+var shop: ShopSystem
+var order_index := 0
+var order_database: Array[Dictionary] = []
 var gold := 100
 var last_potion := ""
 var selected: Array[String] = []
@@ -30,6 +38,14 @@ func _ready() -> void:
     recipes = Recipes.new()
     orders = Orders.new()
     save_manager = Save.new()
+    economy = Economy.new()
+    upgrades = Upgrade.new()
+    shop = Shop.new()
+    var order_file := FileAccess.open("res://data/orders/orders.json", FileAccess.READ)
+    if order_file:
+        var order_data = JSON.parse_string(order_file.get_as_text())
+        if order_data is Dictionary:
+            order_database.assign(order_data.get("orders", []))
     inventory.changed.connect(_refresh_inventory)
     recipes.discovered.connect(_on_recipe_discovered)
     orders.completed.connect(_on_order_completed)
@@ -118,9 +134,12 @@ func show_lab() -> void:
     var top := HBoxContainer.new()
     top.add_theme_constant_override("separation", 12)
     box.add_child(top)
+    gold = economy.gold
     gold_label = _make_label(top, "🪙  %d" % gold, 20)
     gold_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     reputation_label = _make_label(top, "★  %d" % orders.reputation, 20)
+    var shop_btn := _make_button(top, "🛒 Магазин", 48)
+    shop_btn.pressed.connect(show_shop)
     var menu := _make_button(top, "Меню", 48)
     menu.pressed.connect(show_menu)
 
@@ -212,7 +231,8 @@ func _on_recipe_discovered(_id: String) -> void:
     pass
 
 func _on_order_completed(reward: int) -> void:
-    gold += reward
+    economy.earn(reward)
+    gold = economy.gold
     _refresh_header()
 
 func _refresh_header() -> void:
@@ -225,6 +245,36 @@ func _refresh_inventory(_items: Dictionary) -> void:
     for id in inventory_labels:
         if is_instance_valid(inventory_labels[id]):
             inventory_labels[id].text = "%s\n%d" % [ITEMS[id]["name"], int(inventory.items.get(id, 0))]
+
+
+func show_shop() -> void:
+    var box := _base("🛒 МАГАЗИН И ЛАБОРАТОРИЯ")
+    _make_label(box, "Ингредиенты", 21)
+    for id in ["herb", "mushroom", "crystal", "flower", "lavender", "ember_root"]:
+        var row := HBoxContainer.new()
+        box.add_child(row)
+        var label := _make_label(row, "%s  •  %d зол." % [ITEMS.get(id, {"name": id})["name"], shop.prices.get(id, 0)], 16)
+        label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        var buy := _make_button(row, "Купить", 48)
+        buy.pressed.connect(func():
+            if shop.buy(id, economy, inventory):
+                gold = economy.gold
+                show_shop()
+            else:
+                message_label = _make_label(box, "Недостаточно золота или товара нет.", 14)
+        )
+    _make_label(box, "Улучшения", 21)
+    for upgrade in shop.upgrades:
+        if upgrades.owned.has(str(upgrade["id"])):
+            continue
+        var ub := _make_button(box, "🔧 %s — %d зол." % [upgrade["name"], upgrade["price"]], 58)
+        ub.pressed.connect(func():
+            if upgrades.purchase(upgrade, economy):
+                gold = economy.gold
+                show_shop()
+        )
+    var back := _make_button(box, "← В лабораторию", 60)
+    back.pressed.connect(show_lab)
 
 func _show_recipes() -> void:
     var box := _base("📖 КНИГА РЕЦЕПТОВ")
@@ -252,6 +302,7 @@ func _load_game() -> void:
         show_lab()
         return
     gold = int(state.get("gold", 100))
+    economy.gold = gold
     orders.reputation = int(state.get("reputation", 0))
     inventory.items = state.get("inventory", inventory.items)
     recipes.known = state.get("known_recipes", {})

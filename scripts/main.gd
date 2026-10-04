@@ -160,6 +160,7 @@ func _panel_style(color: Color, radius := 18) -> StyleBoxFlat:
 func _section_label(parent: Control, text: String) -> Label:
     var row := HBoxContainer.new()
     row.add_theme_constant_override("separation", 8)
+    row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     parent.add_child(row)
     var mark := ColorRect.new()
     mark.color = Color("c98a48")
@@ -172,6 +173,7 @@ func _section_label(parent: Control, text: String) -> Label:
 func _card(parent: Control, color := Color("20171b")) -> VBoxContainer:
     var panel := PanelContainer.new()
     panel.add_theme_stylebox_override("panel", _panel_style(color))
+    panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     parent.add_child(panel)
     var box := VBoxContainer.new()
     box.add_theme_constant_override("separation", 10)
@@ -201,10 +203,13 @@ func _base(title: String) -> VBoxContainer:
     add_child(margin)
     var scroll := ScrollContainer.new()
     scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+    scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+    scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
     margin.add_child(scroll)
     var box := VBoxContainer.new()
     box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    box.custom_minimum_size.x = 328.0
     box.add_theme_constant_override("separation", 12)
     scroll.add_child(box)
     box.modulate.a = 0.0
@@ -213,6 +218,7 @@ func _base(title: String) -> VBoxContainer:
     tween.tween_property(box, "modulate:a", 1.0, 0.22)
     var header := HBoxContainer.new()
     header.add_theme_constant_override("separation", 10)
+    header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     box.add_child(header)
     var title_label := _make_label(header, title, 26)
     title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL

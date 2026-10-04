@@ -15,7 +15,7 @@
 ## Phase 1 — MVP vertical slice
 - [x] Main menu
 - [x] Laboratory scene
-- [ ] Player state
+- [x] Player state
 - [x] Reagent inventory
 - [x] Reagent selection UI
 - [x] Cauldron/brewing interaction

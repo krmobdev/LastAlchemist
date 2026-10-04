@@ -9,6 +9,8 @@ const Upgrade = preload("res://scripts/systems/world/upgrade_system.gd")
 const Shop = preload("res://scripts/systems/shop/shop_system.gd")
 const World = preload("res://scripts/systems/world/world_system.gd")
 const WorldEvents = preload("res://scripts/systems/world/event_system.gd")
+const Dialogue = preload("res://scripts/systems/characters/dialogue_system.gd")
+const Characters = preload("res://scripts/systems/characters/character_database.gd")
 
 var inventory: InventorySystem
 var recipes: RecipeBook
@@ -19,6 +21,8 @@ var upgrades: UpgradeSystem
 var shop: ShopSystem
 var world: WorldSystem
 var world_events: WorldEventSystem
+var dialogue: DialogueSystem
+var characters: CharacterDatabase
 var order_index := 0
 var order_database: Array[Dictionary] = []
 var gold := 100
@@ -47,6 +51,8 @@ func _ready() -> void:
     shop = Shop.new()
     world = World.new()
     world_events = WorldEvents.new()
+    dialogue = Dialogue.new()
+    characters = Characters.new()
     world.gathered.connect(_on_gathered)
     var order_file := FileAccess.open("res://data/orders/orders.json", FileAccess.READ)
     if order_file:
@@ -146,6 +152,8 @@ func show_lab() -> void:
     gold_label = _make_label(top, "🪙  %d" % gold, 20)
     gold_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
     reputation_label = _make_label(top, "★  %d" % orders.reputation, 20)
+    var people_btn := _make_button(top, "👥 NPC", 48)
+    people_btn.pressed.connect(show_characters)
     var world_btn := _make_button(top, "🗺 Мир", 48)
     world_btn.pressed.connect(show_world)
     var shop_btn := _make_button(top, "🛒 Магазин", 48)
@@ -282,6 +290,54 @@ func _refresh_inventory(_items: Dictionary) -> void:
             inventory_labels[id].text = "%s\n%d" % [ITEMS[id]["name"], int(inventory.items.get(id, 0))]
 
 
+
+
+func show_characters() -> void:
+    var box := _base("👥 ЖИТЕЛИ СТАРОЙ ДОЛИНЫ")
+    _make_label(box, "Познакомься с жителями. Их истории будут открываться по мере развития лаборатории.", 15)
+    for id in characters.characters:
+        var character: Dictionary = characters.characters[id]
+        var row := HBoxContainer.new()
+        row.add_theme_constant_override("separation", 12)
+        box.add_child(row)
+        var portrait := TextureRect.new()
+        portrait.texture = load("res://assets/characters/%s.svg" % id)
+        portrait.custom_minimum_size = Vector2(72, 72)
+        portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+        portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+        row.add_child(portrait)
+        var info := VBoxContainer.new()
+        info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        row.add_child(info)
+        _make_label(info, str(character.get("name", id)), 19)
+        _make_label(info, str(character.get("role", "")), 14)
+        var talk := _make_button(info, "Поговорить", 44)
+        talk.pressed.connect(func(): show_dialogue(id, 0))
+    var back := _make_button(box, "← В лабораторию", 60)
+    back.pressed.connect(show_lab)
+
+func show_dialogue(character_id: String, line_index: int) -> void:
+    var lines: Array = dialogue.get_lines(character_id)
+    var character: Dictionary = characters.get_character(character_id)
+    var box := _base(str(character.get("name", character_id)))
+    var portrait := TextureRect.new()
+    portrait.texture = load("res://assets/characters/%s.svg" % character_id)
+    portrait.custom_minimum_size = Vector2(150, 150)
+    portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+    portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+    box.add_child(portrait)
+    if line_index < lines.size():
+        var line: Dictionary = lines[line_index]
+        _make_label(box, str(line.get("text", "")), 21)
+        var next := _make_button(box, "Дальше →", 60)
+        next.pressed.connect(func():
+            if line_index + 1 < lines.size():
+                show_dialogue(character_id, line_index + 1)
+            else:
+                show_characters())
+    else:
+        var close := _make_button(box, "Закрыть", 60)
+        close.pressed.connect(show_characters)
 
 func show_world() -> void:
     var box := _base("🗺 МИР — СТАРАЯ ДОЛИНА")

@@ -6,26 +6,26 @@
 - [x] README
 - [x] .gitignore
 - [x] Architecture document
-- [ ] Base folder structure
-- [ ] Core GameManager
-- [ ] EventBus
-- [ ] SaveManager skeleton
-- [ ] Data/resource conventions
+- [x] Base folder structure
+- [x] Core GameManager
+- [x] EventBus
+- [x] SaveManager skeleton
+- [x] Data/resource conventions
 
 ## Phase 1 — MVP vertical slice
-- [ ] Main menu
-- [ ] Laboratory scene
+- [x] Main menu
+- [x] Laboratory scene
 - [ ] Player state
-- [ ] Reagent inventory
-- [ ] Reagent selection UI
-- [ ] Cauldron/brewing interaction
-- [ ] Reaction engine
-- [ ] Recipe discovery
-- [ ] Recipe book
-- [ ] First client/order
-- [ ] Order validation
-- [ ] Reward/economy
-- [ ] Save/load
+- [x] Reagent inventory
+- [x] Reagent selection UI
+- [x] Cauldron/brewing interaction
+- [x] Reaction engine
+- [x] Recipe discovery
+- [x] Recipe book
+- [x] First client/order
+- [x] Order validation
+- [x] Reward/economy
+- [x] Save/load
 
 ## Phase 2 — Content
 - [ ] 10–15 reagents
@@ -57,7 +57,7 @@
 
 ## Phase 5 — QA & release
 - [ ] Automated logic tests
-- [ ] Save/load tests
+- [x] Save/load tests
 - [ ] Android debug build
 - [ ] Device test
 - [ ] Release build

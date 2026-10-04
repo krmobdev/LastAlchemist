@@ -3,7 +3,20 @@ extends RefCounted
 
 signal changed(items: Dictionary)
 
-var items: Dictionary = {"herb": 5, "mushroom": 4, "crystal": 3, "flower": 3}
+var items: Dictionary = {}
+
+func _init() -> void:
+    var file := FileAccess.open("res://data/reagents/reagents.json", FileAccess.READ)
+    if file == null:
+        return
+    var parsed = JSON.parse_string(file.get_as_text())
+    if parsed is Dictionary:
+        for reagent in parsed.get("reagents", []):
+            items[str(reagent["id"])] = 0
+    items["herb"] = 5
+    items["mushroom"] = 4
+    items["crystal"] = 3
+    items["flower"] = 3
 
 func has_items(requirements: Dictionary) -> bool:
     for id in requirements:

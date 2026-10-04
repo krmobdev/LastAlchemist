@@ -1,0 +1,7 @@
+{
+  "recipes": [
+    {"id":"healing","name":"Зелье восстановления","a":"herb","b":"flower","result":"potion","reward":40},
+    {"id":"focus","name":"Эликсир концентрации","a":"crystal","b":"flower","result":"potion","reward":55},
+    {"id":"ember","name":"Алхимический эликсир","a":"mushroom","b":"crystal","result":"potion","reward":70}
+  ]
+}

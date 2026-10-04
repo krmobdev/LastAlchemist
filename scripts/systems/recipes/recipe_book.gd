@@ -4,11 +4,22 @@ extends RefCounted
 signal discovered(recipe_id: String)
 
 var known: Dictionary = {}
-var recipes := {
-    "healing": {"name": "Зелье восстановления", "a": "herb", "b": "flower", "result": "potion", "reward": 40},
-    "focus": {"name": "Эликсир концентрации", "a": "crystal", "b": "flower", "result": "potion", "reward": 55},
-    "ember": {"name": "Алхимический эликсир", "a": "mushroom", "b": "crystal", "result": "potion", "reward": 70}
-}
+var recipes: Dictionary = {}
+
+func _init() -> void:
+    _load_data()
+
+func _load_data() -> void:
+    var file := FileAccess.open("res://data/recipes/recipes.json", FileAccess.READ)
+    if file == null:
+        push_error("recipes.json not found")
+        return
+    var parsed = JSON.parse_string(file.get_as_text())
+    if not parsed is Dictionary:
+        push_error("Invalid recipes.json")
+        return
+    for recipe in parsed.get("recipes", []):
+        recipes[str(recipe["id"])] = recipe
 
 func discover(id: String) -> void:
     if recipes.has(id) and not known.has(id):

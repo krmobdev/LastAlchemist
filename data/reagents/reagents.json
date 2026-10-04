@@ -1,0 +1,8 @@
+{
+  "reagents": [
+    {"id":"herb","name":"Лунная трава","category":"plant","rarity":1,"base_price":8},
+    {"id":"mushroom","name":"Красный гриб","category":"fungus","rarity":1,"base_price":10},
+    {"id":"crystal","name":"Синий кристалл","category":"mineral","rarity":2,"base_price":18},
+    {"id":"flower","name":"Звёздный цветок","category":"plant","rarity":2,"base_price":15}
+  ]
+}

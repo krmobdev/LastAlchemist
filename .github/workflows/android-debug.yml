@@ -1,0 +1,39 @@
+name: Android Debug APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - '**.gd'
+      - '**.tscn'
+      - '**.tres'
+      - '**.json'
+      - '**.svg'
+      - 'project.godot'
+      - 'export_presets.cfg'
+      - '.github/workflows/android-debug.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Export Android debug APK
+        uses: dulvui/godot-android-export@v4
+        with:
+          godot-version: 4.3.0
+          godot-channel: stable
+          working-directory: .
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: LastAlchemist-debug-apk
+          path: build/LastAlchemist-debug.apk
+          if-no-files-found: error

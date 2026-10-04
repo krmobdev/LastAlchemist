@@ -48,15 +48,15 @@
 ## Phase 4 — Polish
 - [x] Animations
 - [ ] Particle effects
-- [x] Audio
-- [x] Haptics
+- [ ] Audio
+- [x] Haptics adapter
 - [ ] Tutorial
 - [ ] UX pass
 - [ ] Balance pass
 - [ ] Error handling
 
 ## Phase 5 — QA & release
-- [x] Automated logic tests
+- [ ] Automated logic tests
 - [x] Save/load tests
 - [ ] Android debug build
 - [ ] Device test

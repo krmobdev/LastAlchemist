@@ -11,6 +11,7 @@ const World = preload("res://scripts/systems/world/world_system.gd")
 const WorldEvents = preload("res://scripts/systems/world/event_system.gd")
 const Dialogue = preload("res://scripts/systems/characters/dialogue_system.gd")
 const Characters = preload("res://scripts/systems/characters/character_database.gd")
+const Story = preload("res://scripts/systems/story/story_system.gd")
 
 var inventory: InventorySystem
 var recipes: RecipeBook
@@ -23,6 +24,7 @@ var world: WorldSystem
 var world_events: WorldEventSystem
 var dialogue: DialogueSystem
 var characters: CharacterDatabase
+var story: StorySystem
 var order_index := 0
 var order_database: Array[Dictionary] = []
 var gold := 100
@@ -38,7 +40,15 @@ const ITEMS := {
     "herb": {"name": "Лунная трава", "icon": "res://assets/items/herb.svg"},
     "mushroom": {"name": "Красный гриб", "icon": "res://assets/items/mushroom.svg"},
     "crystal": {"name": "Синий кристалл", "icon": "res://assets/items/crystal.svg"},
-    "flower": {"name": "Звёздный цветок", "icon": "res://assets/items/flower.svg"}
+    "flower": {"name": "Звёздный цветок", "icon": "res://assets/items/flower.svg"},
+    "lavender": {"name": "Лавандовый пучок", "icon": ""},
+    "ember_root": {"name": "Корень угольника", "icon": ""},
+    "frost_leaf": {"name": "Морозный лист", "icon": ""},
+    "sun_dust": {"name": "Солнечная пыль", "icon": ""},
+    "night_berry": {"name": "Ночная ягода", "icon": ""},
+    "moonstone": {"name": "Лунный камень", "icon": ""},
+    "thorn": {"name": "Колючая лоза", "icon": ""},
+    "ash": {"name": "Серый пепел", "icon": ""}
 }
 
 func _ready() -> void:
@@ -53,6 +63,9 @@ func _ready() -> void:
     world_events = WorldEvents.new()
     dialogue = Dialogue.new()
     characters = Characters.new()
+    story = Story.new()
+    story.milestone_reached.connect(_on_milestone_reached)
+    story.act_changed.connect(_on_act_changed)
     world.gathered.connect(_on_gathered)
     var order_file := FileAccess.open("res://data/orders/orders.json", FileAccess.READ)
     if order_file:
@@ -158,6 +171,8 @@ func show_lab() -> void:
     world_btn.pressed.connect(show_world)
     var shop_btn := _make_button(top, "🛒 Магазин", 48)
     shop_btn.pressed.connect(show_shop)
+    var story_btn := _make_button(top, "📜 Сюжет", 48)
+    story_btn.pressed.connect(show_story)
     var menu := _make_button(top, "Меню", 48)
     menu.pressed.connect(show_menu)
 
@@ -186,7 +201,8 @@ func show_lab() -> void:
         var b := Button.new()
         b.custom_minimum_size = Vector2(0, 88)
         b.text = "%s\n%d" % [data["name"], int(inventory.items.get(id, 0))]
-        b.icon = load(data["icon"])
+        if not str(data["icon"]).is_empty():
+            b.icon = load(data["icon"])
         b.expand_icon = true
         b.icon_max_width = 48
         b.add_theme_font_size_override("font_size", 15)
@@ -234,6 +250,7 @@ func _brew() -> void:
         message_label.text = "💨 Реакция нестабильна. Получилась неизвестная смесь."
     else:
         recipes.discover(recipe_id)
+        story.check_progress(orders.reputation, world, recipes.known)
         last_potion = recipe_id
         message_label.text = "✨ Успех! Открыт рецепт: %s" % recipes.recipes[recipe_id]["name"]
     selected.clear()
@@ -276,6 +293,7 @@ func _on_recipe_discovered(_id: String) -> void:
 func _on_order_completed(reward: int) -> void:
     economy.earn(reward)
     gold = economy.gold
+    story.check_progress(orders.reputation, world, recipes.known)
     _refresh_header()
 
 func _refresh_header() -> void:
@@ -287,10 +305,34 @@ func _refresh_header() -> void:
 func _refresh_inventory(_items: Dictionary) -> void:
     for id in inventory_labels:
         if is_instance_valid(inventory_labels[id]):
-            inventory_labels[id].text = "%s\n%d" % [ITEMS[id]["name"], int(inventory.items.get(id, 0))]
+            inventory_labels[id].text = "%s\n%d" % [ITEMS.get(id, {"name": id})["name"], int(inventory.items.get(id, 0))]
 
 
 
+
+
+func show_story() -> void:
+    var box := _base("📜 ИСТОРИЯ")
+    var act := story.get_current_act()
+    _make_label(box, "Акт: %s" % str(act.get("name", "Искра")), 24)
+    _make_label(box, str(act.get("goal", "")), 17)
+    _make_label(box, "Пройденные этапы", 19)
+    if story.reached.is_empty():
+        _make_label(box, "Пока нет завершённых этапов.", 15)
+    else:
+        for id in story.reached:
+            var data: Dictionary = story.milestones.get(id, {})
+            _make_label(box, "✓ %s\n%s" % [str(data.get("title", id)), str(data.get("text", ""))], 15)
+    var back := _make_button(box, "← В лабораторию", 60)
+    back.pressed.connect(show_lab)
+
+func _on_milestone_reached(id: String, data: Dictionary) -> void:
+    if is_instance_valid(message_label):
+        message_label.text = "📜 %s\n%s" % [str(data.get("title", id)), str(data.get("text", ""))]
+
+func _on_act_changed(act: Dictionary) -> void:
+    if is_instance_valid(message_label):
+        message_label.text = "✨ Новый акт: %s\n%s" % [str(act.get("name", "")), str(act.get("goal", ""))]
 
 func show_characters() -> void:
     var box := _base("👥 ЖИТЕЛИ СТАРОЙ ДОЛИНЫ")
@@ -432,7 +474,9 @@ func _save_game() -> void:
         "upgrades_owned": upgrades.owned,
         "upgrade_capacity_bonus": upgrades.capacity_bonus,
         "upgrade_quality_bonus": upgrades.quality_bonus,
-        "order_index": orders.order_index
+        "order_index": orders.order_index,
+        "story_reached": story.reached,
+        "story_current_act": story.current_act
     }
     var ok := save_manager.save_game(state)
     message_label.text = "💾 Игра сохранена." if ok else "Ошибка сохранения."
@@ -455,4 +499,7 @@ func _load_game() -> void:
     orders.order_index = int(state.get("order_index", 0))
     if not orders.orders.is_empty():
         orders.active = orders.orders[orders.order_index % orders.orders.size()]
+    story.reached = state.get("story_reached", {})
+    story.current_act = int(state.get("story_current_act", 0))
+    story.check_progress(orders.reputation, world, recipes.known)
     show_lab()

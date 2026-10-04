@@ -35,7 +35,7 @@
 - [x] Laboratory upgrades
 - [x] Reputation
 - [x] Multiple order types
-- [ ] First village location
+- [x] First village location
 
 ## Phase 3 — World & progression
 - [x] Map
@@ -43,7 +43,7 @@
 - [x] Locked locations
 - [x] Random events
 - [x] Rare reagents
-- [ ] Story progression
+- [x] Story progression
 
 ## Phase 4 — Polish
 - [ ] Animations

@@ -93,15 +93,46 @@ func _make_label(parent: Control, text: String, size: int = 18) -> Label:
     var label := Label.new()
     label.text = text
     label.add_theme_font_size_override("font_size", size)
+    label.add_theme_color_override("font_color", Color("eadfc8"))
+    label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.55))
+    label.add_theme_constant_override("shadow_offset_x", 1)
+    label.add_theme_constant_override("shadow_offset_y", 2)
     label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     parent.add_child(label)
     return label
+
+func _button_style(bg: Color, border: Color, radius := 14, shadow := 8) -> StyleBoxFlat:
+    var s := StyleBoxFlat.new()
+    s.bg_color = bg
+    s.corner_radius_top_left = radius
+    s.corner_radius_top_right = radius
+    s.corner_radius_bottom_left = radius
+    s.corner_radius_bottom_right = radius
+    s.border_width_left = 1
+    s.border_width_right = 1
+    s.border_width_top = 1
+    s.border_width_bottom = 1
+    s.border_color = border
+    s.shadow_color = Color(0, 0, 0, 0.38)
+    s.shadow_size = shadow
+    s.content_margin_left = 14
+    s.content_margin_right = 14
+    s.content_margin_top = 10
+    s.content_margin_bottom = 10
+    return s
 
 func _make_button(parent: Control, text: String, min_height: int = 64) -> Button:
     var b := Button.new()
     b.text = text
     b.custom_minimum_size = Vector2(0, min_height)
-    b.add_theme_font_size_override("font_size", 18)
+    b.add_theme_font_size_override("font_size", 17)
+    b.add_theme_color_override("font_color", Color("f2e8d2"))
+    b.add_theme_color_override("font_hover_color", Color("fff4d1"))
+    b.add_theme_color_override("font_pressed_color", Color("fff7df"))
+    b.add_theme_stylebox_override("normal", _button_style(Color("261c20"), Color("6b4a3b")))
+    b.add_theme_stylebox_override("hover", _button_style(Color("35242a"), Color("b17a45")))
+    b.add_theme_stylebox_override("pressed", _button_style(Color("4a2b2d"), Color("d69a52"), 14, 4))
+    b.add_theme_stylebox_override("disabled", _button_style(Color("1c171a"), Color("3a3030")))
     parent.add_child(b)
     b.pressed.connect(func(): feedback.click())
     return b
@@ -117,12 +148,35 @@ func _panel_style(color: Color, radius := 18) -> StyleBoxFlat:
     s.border_width_right = 1
     s.border_width_top = 1
     s.border_width_bottom = 1
-    s.border_color = Color("6e5532")
+    s.border_color = Color("6f503d")
+    s.shadow_color = Color(0, 0, 0, 0.42)
+    s.shadow_size = 10
     s.content_margin_left = 18
     s.content_margin_right = 18
-    s.content_margin_top = 14
-    s.content_margin_bottom = 14
+    s.content_margin_top = 16
+    s.content_margin_bottom = 16
     return s
+
+func _section_label(parent: Control, text: String) -> Label:
+    var row := HBoxContainer.new()
+    row.add_theme_constant_override("separation", 8)
+    parent.add_child(row)
+    var mark := ColorRect.new()
+    mark.color = Color("c98a48")
+    mark.custom_minimum_size = Vector2(4, 24)
+    row.add_child(mark)
+    var label := _make_label(row, text.to_upper(), 15)
+    label.add_theme_color_override("font_color", Color("d5a766"))
+    return label
+
+func _card(parent: Control, color := Color("20171b")) -> VBoxContainer:
+    var panel := PanelContainer.new()
+    panel.add_theme_stylebox_override("panel", _panel_style(color))
+    parent.add_child(panel)
+    var box := VBoxContainer.new()
+    box.add_theme_constant_override("separation", 10)
+    panel.add_child(box)
+    return box
 
 func _base(title: String) -> VBoxContainer:
     _clear()
@@ -133,29 +187,70 @@ func _base(title: String) -> VBoxContainer:
     bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
     add_child(bg)
-
+    var shade := ColorRect.new()
+    shade.color = Color(0.04, 0.025, 0.04, 0.16)
+    shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    add_child(shade)
     var margin := MarginContainer.new()
     margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-    margin.add_theme_constant_override("margin_left", 24)
-    margin.add_theme_constant_override("margin_right", 24)
-    margin.add_theme_constant_override("margin_top", 24)
-    margin.add_theme_constant_override("margin_bottom", 24)
+    margin.add_theme_constant_override("margin_left", 16)
+    margin.add_theme_constant_override("margin_right", 16)
+    margin.add_theme_constant_override("margin_top", 14)
+    margin.add_theme_constant_override("margin_bottom", 14)
     add_child(margin)
-
+    var scroll := ScrollContainer.new()
+    scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+    scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+    margin.add_child(scroll)
     var box := VBoxContainer.new()
-    box.add_theme_constant_override("separation", 14)
-    margin.add_child(box)
+    box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    box.add_theme_constant_override("separation", 12)
+    scroll.add_child(box)
     box.modulate.a = 0.0
     var tween := create_tween()
     tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-    tween.tween_property(box, "modulate:a", 1.0, 0.18)
-    _make_label(box, title, 30)
+    tween.tween_property(box, "modulate:a", 1.0, 0.22)
+    var header := HBoxContainer.new()
+    header.add_theme_constant_override("separation", 10)
+    box.add_child(header)
+    var title_label := _make_label(header, title, 26)
+    title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    title_label.add_theme_color_override("font_color", Color("f0d39a"))
+    var rune := _make_label(header, "✦", 22)
+    rune.add_theme_color_override("font_color", Color("c98a48"))
     return box
 
+func _make_bottom_nav(parent: Control) -> void:
+    var nav_panel := PanelContainer.new()
+    nav_panel.add_theme_stylebox_override("panel", _panel_style(Color("171217"), 16))
+    parent.add_child(nav_panel)
+    var nav := HBoxContainer.new()
+    nav.add_theme_constant_override("separation", 6)
+    nav_panel.add_child(nav)
+    var lab := _make_button(nav, "⚗
+Лаб", 58)
+    var world_btn := _make_button(nav, "✦
+Мир", 58)
+    var shop_btn := _make_button(nav, "◈
+Торговля", 58)
+    var npc_btn := _make_button(nav, "♙
+Люди", 58)
+    var story_btn := _make_button(nav, "☾
+Сюжет", 58)
+    for b in [lab, world_btn, shop_btn, npc_btn, story_btn]:
+        b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+        b.add_theme_font_size_override("font_size", 12)
+    lab.pressed.connect(show_lab)
+    world_btn.pressed.connect(show_world)
+    shop_btn.pressed.connect(show_shop)
+    npc_btn.pressed.connect(show_characters)
+    story_btn.pressed.connect(show_story)
+
 func show_menu() -> void:
-    var box := _base("LAST ALCHEMIST")
+    var box := _base("ПОСЛЕДНИЙ АЛХИМИК")
     _make_label(box, "Последний алхимик", 20)
-    _make_label(box, "Создавай. Исследуй. Торгуй.", 16)
+    _make_label(box, "Последняя лаборатория на краю Старой Долины.", 16)
     var spacer := Control.new()
     spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
     box.add_child(spacer)
@@ -168,73 +263,103 @@ func show_menu() -> void:
 
 func show_lab() -> void:
     var box := _base("ЛАБОРАТОРИЯ")
-
-    var top := HBoxContainer.new()
-    top.add_theme_constant_override("separation", 12)
-    box.add_child(top)
     gold = economy.gold
-    gold_label = _make_label(top, "🪙  %d" % gold, 20)
-    gold_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    reputation_label = _make_label(top, "★  %d" % orders.reputation, 20)
-    var people_btn := _make_button(top, "👥 NPC", 48)
-    people_btn.pressed.connect(show_characters)
-    var world_btn := _make_button(top, "🗺 Мир", 48)
-    world_btn.pressed.connect(show_world)
-    var shop_btn := _make_button(top, "🛒 Магазин", 48)
-    shop_btn.pressed.connect(show_shop)
-    var story_btn := _make_button(top, "📜 Сюжет", 48)
-    story_btn.pressed.connect(show_story)
-    var menu := _make_button(top, "Меню", 48)
-    menu.pressed.connect(show_menu)
+    var stats := HBoxContainer.new()
+    stats.add_theme_constant_override("separation", 8)
+    box.add_child(stats)
+    var gold_card := _card(stats, Color("21191a"))
+    gold_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    var g := _make_label(gold_card, "ЗОЛОТО", 11)
+    g.add_theme_color_override("font_color", Color("9d8061"))
+    gold_label = _make_label(gold_card, "◈ %d" % gold, 21)
+    gold_label.add_theme_color_override("font_color", Color("e3b85f"))
+    var rep_card := _card(stats, Color("21191a"))
+    rep_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    var r := _make_label(rep_card, "РЕПУТАЦИЯ", 11)
+    r.add_theme_color_override("font_color", Color("9d8061"))
+    reputation_label = _make_label(rep_card, "✦ %d" % orders.reputation, 21)
+    reputation_label.add_theme_color_override("font_color", Color("cfa56c"))
 
-    var order_panel := PanelContainer.new()
-    order_panel.add_theme_stylebox_override("panel", _panel_style(Color("382a29")))
-    box.add_child(order_panel)
-    var order_box := VBoxContainer.new()
-    order_panel.add_child(order_box)
-    _make_label(order_box, "📜 ЗАКАЗ", 19)
-    _make_label(order_box, "Клиент: %s\nНужно: %s\nНаграда: %d золотых" % [_order_client_name(), _order_recipe_name(), int(orders.active.get("reward", 0))], 16)
-    var deliver := _make_button(order_box, "Сдать зелье", 52)
+    var hero := PanelContainer.new()
+    hero.add_theme_stylebox_override("panel", _panel_style(Color("21181b"), 22))
+    box.add_child(hero)
+    var hero_row := HBoxContainer.new()
+    hero_row.add_theme_constant_override("separation", 12)
+    hero.add_child(hero_row)
+    var cauldron := TextureRect.new()
+    cauldron.texture = load("res://assets/ui/cauldron_hero.svg")
+    cauldron.custom_minimum_size = Vector2(138, 132)
+    cauldron.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+    cauldron.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+    hero_row.add_child(cauldron)
+    var hero_text := VBoxContainer.new()
+    hero_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    hero_row.add_child(hero_text)
+    var h1 := _make_label(hero_text, "Твоя последняя надежда", 19)
+    h1.add_theme_color_override("font_color", Color("f1d39c"))
+    _make_label(hero_text, "Старый котёл ещё помнит великих алхимиков. Осталось заставить его работать.", 13)
+    var heat := _make_label(hero_text, "●  КОТЁЛ ГОТОВ", 12)
+    heat.add_theme_color_override("font_color", Color("d88a4b"))
+
+    _section_label(box, "Текущий заказ")
+    var order_box := _card(box, Color("2a1b1e"))
+    var order_head := HBoxContainer.new()
+    order_box.add_child(order_head)
+    var client_id := str(orders.active.get("client", ""))
+    var portrait := TextureRect.new()
+    portrait.texture = load("res://assets/characters/%s.svg" % client_id)
+    portrait.custom_minimum_size = Vector2(62, 62)
+    portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+    portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+    order_head.add_child(portrait)
+    var order_info := VBoxContainer.new()
+    order_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    order_head.add_child(order_info)
+    var client_label := _make_label(order_info, _order_client_name(), 18)
+    client_label.add_theme_color_override("font_color", Color("f0d29a"))
+    _make_label(order_info, "Заказано: %s" % _order_recipe_name(), 14)
+    _make_label(order_info, "Награда: ◈ %d" % int(orders.active.get("reward", 0)), 13)
+    var deliver := _make_button(order_box, "СДАТЬ ЗЕЛЬЕ", 52)
     deliver.pressed.connect(_deliver_order)
-    var next := _make_button(order_box, "Следующий заказ", 46)
+    var next := _make_button(order_box, "Другой заказ", 42)
     next.pressed.connect(func():
         orders.next_order()
         show_lab())
 
-    _make_label(box, "ИНГРЕДИЕНТЫ — выбери два", 19)
+    _section_label(box, "Ингредиенты — выбери два")
     var grid := GridContainer.new()
     grid.columns = 2
-    grid.add_theme_constant_override("h_separation", 10)
-    grid.add_theme_constant_override("v_separation", 10)
+    grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+    grid.add_theme_constant_override("h_separation", 9)
+    grid.add_theme_constant_override("v_separation", 9)
     box.add_child(grid)
     for id in ITEMS:
         var data: Dictionary = ITEMS[id]
         var b := Button.new()
-        b.custom_minimum_size = Vector2(0, 88)
-        b.text = "%s\n%d" % [data["name"], int(inventory.items.get(id, 0))]
-        if not str(data["icon"]).is_empty():
-            b.icon = load(data["icon"])
+        b.custom_minimum_size = Vector2(0, 86)
+        b.text = "%s
+× %d" % [data["name"], int(inventory.items.get(id, 0))]
+        b.icon = load(data["icon"])
         b.expand_icon = true
-        b.icon_max_width = 48
-        b.add_theme_font_size_override("font_size", 15)
+        b.icon_max_width = 42
+        b.add_theme_font_size_override("font_size", 13)
+        b.add_theme_color_override("font_color", Color("e8dbc3"))
+        b.add_theme_stylebox_override("normal", _button_style(Color("1c171b"), Color("4d3934"), 14, 5))
+        b.add_theme_stylebox_override("hover", _button_style(Color("2d2025"), Color("a56d42"), 14, 7))
+        b.add_theme_stylebox_override("pressed", _button_style(Color("4a282a"), Color("d28a4a"), 14, 3))
         b.pressed.connect(func(): _select_reagent(id))
         grid.add_child(b)
         inventory_labels[id] = b
 
-    var brew := _make_button(box, "🔥  ВАРИТЬ", 68)
+    var brew := _make_button(box, "⚗  ВАРИТЬ ЗЕЛЬЕ", 68)
+    brew.add_theme_font_size_override("font_size", 20)
+    brew.add_theme_stylebox_override("normal", _button_style(Color("6b3828"), Color("d18b49"), 16, 10))
+    brew.add_theme_stylebox_override("hover", _button_style(Color("87462c"), Color("efb15d"), 16, 12))
     brew.pressed.connect(_brew)
-    message_label = _make_label(box, "Выбрано: —\nПодсказка: попробуй траву + цветок.", 16)
-    message_label.add_theme_color_override("font_color", Color("e7d6ad"))
-
-    var lower := HBoxContainer.new()
-    lower.add_theme_constant_override("separation", 10)
-    box.add_child(lower)
-    var recipes_btn := _make_button(lower, "📖 Рецепты", 52)
-    recipes_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    recipes_btn.pressed.connect(_show_recipes)
-    var save_btn := _make_button(lower, "💾 Сохранить", 52)
-    save_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-    save_btn.pressed.connect(_save_game)
+    message_label = _make_label(box, "Выбрано: —
+Подсказка: попробуй лунную траву + звёздный цветок.", 14)
+    message_label.add_theme_color_override("font_color", Color("c9b79d"))
+    _make_bottom_nav(box)
 
 func _select_reagent(id: String) -> void:
     if selected.size() >= 2:

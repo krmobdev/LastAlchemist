@@ -1,1 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280"><defs><linearGradient id="b" x2="0" y2="1"><stop stop-color="#151126"/><stop offset="1" stop-color="#30201d"/></linearGradient></defs><rect width="720" height="1280" fill="url(#b)"/><path d="M0 700h720v580H0z" fill="#241817"/><g fill="#4b2d24"><rect x="35" y="180" width="180" height="330" rx="10"/><rect x="505" y="160" width="180" height="350" rx="10"/></g><g fill="#d99b4b" opacity=".45"><circle cx="90" cy="240" r="18"/><circle cx="150" cy="310" r="13"/><circle cx="580" cy="230" r="17"/><circle cx="635" cy="335" r="12"/></g><path d="M270 930h180l45 210H225Z" fill="#56352a"/><ellipse cx="360" cy="900" rx="120" ry="42" fill="#8b5630"/><ellipse cx="360" cy="885" rx="85" ry="25" fill="#32a88b" opacity=".8"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1280" viewBox="0 0 720 1280">
+<defs>
+  <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#100e19"/><stop offset=".52" stop-color="#20151b"/><stop offset="1" stop-color="#100c10"/></linearGradient>
+  <radialGradient id="moon"><stop stop-color="#ead8a1" stop-opacity=".95"/><stop offset="1" stop-color="#c49a55" stop-opacity="0"/></radialGradient>
+  <radialGradient id="fire"><stop stop-color="#efb35d" stop-opacity=".55"/><stop offset="1" stop-color="#c85c2b" stop-opacity="0"/></radialGradient>
+  <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#49302a"/><stop offset="1" stop-color="#21171a"/></linearGradient>
+</defs>
+<rect width="720" height="1280" fill="url(#bg)"/>
+<circle cx="520" cy="190" r="190" fill="url(#moon)" opacity=".28"/>
+<!-- stone/wood walls -->
+<path d="M0 0h720v650H0z" fill="#17131b"/>
+<path d="M0 560h720v720H0z" fill="#110d11"/>
+<path d="M0 600h720" stroke="#51352b" stroke-width="10" opacity=".55"/>
+<!-- window -->
+<path d="M475 70h170v245H475z" fill="#0a0d19" stroke="#79523b" stroke-width="10"/>
+<path d="M560 70v245M475 190h170" stroke="#79523b" stroke-width="8"/>
+<circle cx="525" cy="125" r="34" fill="#ead8a1" opacity=".8"/>
+<circle cx="525" cy="125" r="80" fill="url(#moon)"/>
+<!-- shelves -->
+<g fill="url(#wood)" stroke="#704a36" stroke-width="5">
+ <path d="M25 125h250v380H25z"/><path d="M445 350h250v245H445z"/>
+ <rect x="10" y="485" width="280" height="30" rx="8"/><rect x="430" y="575" width="280" height="30" rx="8"/>
+</g>
+<!-- bottles -->
+<g stroke="#9a6b43" stroke-width="3">
+ <path d="M58 180h42v30l14 16v72H44v-72l14-16z" fill="#36585a"/>
+ <path d="M125 230h38v25l12 15v58h-62v-58l12-15z" fill="#7a3c48"/>
+ <path d="M198 160h40v31l13 15v90h-66v-90l13-15z" fill="#80602c"/>
+ <path d="M480 395h38v28l12 14v68h-62v-68l12-14z" fill="#476a5c"/>
+ <path d="M550 385h44v32l13 15v73h-70v-73l13-15z" fill="#71405e"/>
+ <path d="M625 420h36v27l12 14v55h-60v-55l12-14z" fill="#8b5c31"/>
+</g>
+<g fill="#d7a75a" opacity=".5"><circle cx="74" cy="220" r="4"/><circle cx="213" cy="200" r="5"/><circle cx="572" cy="425" r="4"/><circle cx="643" cy="452" r="5"/></g>
+<!-- central work table -->
+<path d="M85 650h550l-45 500H130z" fill="#24171a" stroke="#52352c" stroke-width="8"/>
+<path d="M55 650h610l-35 70H90z" fill="#54372c" stroke="#8a5a3b" stroke-width="6"/>
+<!-- cauldron glow -->
+<ellipse cx="360" cy="890" rx="260" ry="220" fill="url(#fire)" opacity=".55"/>
+<ellipse cx="360" cy="880" rx="145" ry="60" fill="#0e1114" stroke="#9a623b" stroke-width="12"/>
+<path d="M220 885q15 190 140 210q125-20 140-210" fill="#17161a" stroke="#70452f" stroke-width="10"/>
+<ellipse cx="360" cy="875" rx="115" ry="40" fill="#2f9b86" opacity=".72"/>
+<path d="M300 855q20-70 45 0q25-90 48 0q28-72 45 0" fill="none" stroke="#79d2b0" stroke-width="7" opacity=".65"/>
+<!-- tools -->
+<path d="M120 790l80-80" stroke="#a97a4a" stroke-width="12"/><circle cx="205" cy="705" r="18" fill="#6d4934"/>
+<path d="M600 790l-75-85" stroke="#a97a4a" stroke-width="12"/><circle cx="525" cy="705" r="18" fill="#6d4934"/>
+<!-- floating runes -->
+<g fill="#d3a45d" opacity=".38" font-family="serif" font-size="34"><text x="85" y="610">✦</text><text x="630" y="650">◇</text><text x="300" y="560">☿</text><text x="380" y="530">✧</text></g>
+<!-- foreground -->
+<path d="M0 1120h720v160H0z" fill="#0c090d" opacity=".9"/>
+</svg>

@@ -58,7 +58,7 @@
 ## Phase 5 — QA & release
 - [ ] Automated logic tests
 - [x] Save/load tests
-- [ ] Android debug build
+- [x] Android debug build
 - [ ] Device test
 - [ ] Release build
 - [ ] AAB build

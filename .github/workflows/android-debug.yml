@@ -19,17 +19,44 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Export Android debug APK
-        uses: dulvui/godot-android-export@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
         with:
-          godot-version: 4.3.0
-          godot-channel: stable
-          working-directory: .
+          java-version: '17'
+          distribution: temurin
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "cmake;3.10.2.4988404" "ndk;23.2.8568313"
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.3.0
+          use-dotnet: false
+          include-templates: true
+
+      - name: Import project
+        run: godot --headless --editor --quit --path .
+
+      - name: Export Android debug APK
+        run: |
+          mkdir -p build
+          godot --headless --path . --export-debug "Android Debug" build/LastAlchemist-debug.apk
+
+      - name: Verify APK
+        run: |
+          test -s build/LastAlchemist-debug.apk
+          ls -lh build/LastAlchemist-debug.apk
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4

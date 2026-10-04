@@ -8,6 +8,7 @@ const Economy = preload("res://scripts/systems/economy/economy_system.gd")
 const Upgrade = preload("res://scripts/systems/world/upgrade_system.gd")
 const Shop = preload("res://scripts/systems/shop/shop_system.gd")
 const World = preload("res://scripts/systems/world/world_system.gd")
+const WorldEvents = preload("res://scripts/systems/world/event_system.gd")
 
 var inventory: InventorySystem
 var recipes: RecipeBook
@@ -17,6 +18,7 @@ var economy: EconomySystem
 var upgrades: UpgradeSystem
 var shop: ShopSystem
 var world: WorldSystem
+var world_events: WorldEventSystem
 var order_index := 0
 var order_database: Array[Dictionary] = []
 var gold := 100
@@ -44,6 +46,7 @@ func _ready() -> void:
     upgrades = Upgrade.new()
     shop = Shop.new()
     world = World.new()
+    world_events = WorldEvents.new()
     world.gathered.connect(_on_gathered)
     var order_file := FileAccess.open("res://data/orders/orders.json", FileAccess.READ)
     if order_file:
@@ -308,6 +311,9 @@ func show_world() -> void:
         if result.is_empty():
             return
         inventory.add_item(str(result["item"]), int(result["amount"]))
+        var event := world_events.event_for(world.current_location)
+        if not event.is_empty():
+            inventory.add_item(str(event.get("reward", "")), int(event.get("amount", 1)))
         show_world())
     var back := _make_button(box, "← В лабораторию", 60)
     back.pressed.connect(show_lab)
@@ -364,7 +370,13 @@ func _save_game() -> void:
         "gold": gold,
         "reputation": orders.reputation,
         "inventory": inventory.items,
-        "known_recipes": recipes.known
+        "known_recipes": recipes.known,
+        "world_unlocked": world.unlocked,
+        "world_current_location": world.current_location,
+        "upgrades_owned": upgrades.owned,
+        "upgrade_capacity_bonus": upgrades.capacity_bonus,
+        "upgrade_quality_bonus": upgrades.quality_bonus,
+        "order_index": orders.order_index
     }
     var ok := save_manager.save_game(state)
     message_label.text = "💾 Игра сохранена." if ok else "Ошибка сохранения."
@@ -379,4 +391,12 @@ func _load_game() -> void:
     orders.reputation = int(state.get("reputation", 0))
     inventory.items = state.get("inventory", inventory.items)
     recipes.known = state.get("known_recipes", {})
+    world.unlocked = state.get("world_unlocked", {"village": true})
+    world.current_location = str(state.get("world_current_location", "village"))
+    upgrades.owned = state.get("upgrades_owned", {})
+    upgrades.capacity_bonus = int(state.get("upgrade_capacity_bonus", 0))
+    upgrades.quality_bonus = float(state.get("upgrade_quality_bonus", 0.0))
+    orders.order_index = int(state.get("order_index", 0))
+    if not orders.orders.is_empty():
+        orders.active = orders.orders[orders.order_index % orders.orders.size()]
     show_lab()

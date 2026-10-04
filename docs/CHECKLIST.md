@@ -41,7 +41,7 @@
 - [x] Map
 - [x] Exploration
 - [x] Locked locations
-- [ ] Random events
+- [x] Random events
 - [x] Rare reagents
 - [ ] Story progression
 

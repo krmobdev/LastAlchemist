@@ -2,7 +2,7 @@ class_name SaveManager
 extends Node
 
 const SAVE_PATH := "user://savegame.json"
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 
 func save_game(state: Dictionary) -> bool:
     state["version"] = SAVE_VERSION
